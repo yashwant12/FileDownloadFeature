@@ -1,0 +1,120 @@
+<!-- sldsValidatorIgnore -->
+<template>   
+    <lightning-card title="Files Handler Component" icon-name="custom:custom85"> 
+        <template if:false={count}>
+            <div class="slds-m-around_x-small">
+            <center>
+                <h1><b>Record has no files attached!!</b></h1>
+                <lightning-file-upload
+                    name="fileUploader"
+                    class = "slds-p-bottom_x-small" 
+                    record-id={recordId}
+                    title="Click to upload files"
+                    onuploadfinished={handleUploadFinished}
+                    multiple>
+                </lightning-file-upload>
+            </center>
+            </div>
+        </template>
+        <template if:true={count}> 
+            <div class="slds-m-around_x-small">
+                <lightning-input
+                    class = "slds-float_right" 
+                    type="search" 
+                    placeholder="Search File" 
+                    style="width: 150px;" 
+                    onchange={handleSearch}>
+                </lightning-input>
+                <br><lightning-button-icon  
+                label="Refresh" 
+                class = "slds-float_right slds-p-horizontal_xx-small" 
+                icon-name="utility:refresh" 
+                alternative-text="Refresh table"  
+                onclick={refreshHandler}>
+            </lightning-button-icon>
+                <lightning-file-upload
+                    name="fileUploader"
+                    class = "slds-float_left slds-p-bottom_x-small" 
+                    record-id={recordId}
+                    title="Click to upload files"
+                    onuploadfinished={handleUploadFinished}
+                    multiple>
+                </lightning-file-upload><br>
+                <lightning-button   
+                    label="Delete Files"  
+                    class="slds-p-horizontal_xx-small"
+                    variant="destructive" 
+                    icon-name="utility:delete" 
+                    title="Delete selected files"  
+                    style="width: 200px;"
+                    onclick={checkboxDeleteHandler}>
+                </lightning-button>         
+                <lightning-button  
+                    label="Download Files"  
+                    variant="brand" 
+                    icon-name="utility:download" 
+                    title="Download selected files"  
+                    style="width: fit-content;"
+                    onclick={checkboxDownloadHandler}>
+                </lightning-button>                 
+            </div>
+            <template if:false={isSpinner}>              
+            <div class="slds-box" style="height:275px;">
+                <lightning-datatable  
+                    key-field="Id"  
+                    data={filesList}  
+                    columns={columns}                                      
+                    onrowaction={handleRowAction}
+                    enable-infinite-loading
+                    show-row-number-column>  
+                </lightning-datatable>  
+              </div>
+            </template>
+            <template if:true={isSpinner}>
+                <lightning-spinner alternative-text="Loading" size="medium" variant="brand">
+                </lightning-spinner>
+            </template>
+            <template if:true={isModalOpen}>
+                <section 
+                    role="dialog" 
+                    tabindex="-1" 
+                    aria-labelledby="modal-heading-01" 
+                    aria-modal="true" 
+                    aria-describedby="modal-content-id-1" 
+                    class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <!-- Modal/Popup Box LWC header here -->
+                        <header class="slds-modal__header">
+                            <button 
+                                class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" 
+                                title="Close" 
+                                onclick={closeModal}>
+                                <lightning-icon 
+                                    icon-name="utility:close"
+                                    alternative-text="close"
+                                    variant="inverse"
+                                    size="small" >
+                                </lightning-icon>
+                                <span class="slds-assistive-text">Close</span>
+                            </button>
+                            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Delete File</h2>
+                        </header>
+                        <!-- Modal/Popup Box LWC body starts here -->
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <p><b>Are you sure?
+                            </b></p>
+                            <p><b>This will permanantly delete File : {rowToDelete.Title}.{rowToDelete.FileType} 
+                            </b></p>
+                        </div>
+                        <!-- Modal/Popup Box LWC footer starts here -->
+                        <footer class="slds-modal__footer">
+                            <button class="slds-button slds-button_neutral" onclick={closeModal} title="Cancel">Cancel</button>
+                            <button class="slds-button slds-button_brand" onclick={deleteFile} title="OK">OK</button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template> 
+        </template>
+    </lightning-card>
+</template>
